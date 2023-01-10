@@ -61,7 +61,7 @@ namespace Nasljeđivanje_i_polimorfizam
 
             public override string getDessertType()
             {
-                return " cake";
+                return "cake";
             }
 
         }
@@ -122,6 +122,7 @@ namespace Nasljeđivanje_i_polimorfizam
                        age == person.age;
             }
 
+
             public override string ToString()
             {
                 return this.name + " " + this.surname + " " + this.age;
@@ -149,6 +150,11 @@ namespace Nasljeđivanje_i_polimorfizam
                 return obj is Student student &&
                        base.Equals(obj) &&
                        studentid == student.studentid;
+            }
+
+            public override int GetHashCode()
+            {
+                return -1980727003 + EqualityComparer<string>.Default.GetHashCode(studentid);
             }
 
             public override string ToString()
@@ -188,13 +194,137 @@ namespace Nasljeđivanje_i_polimorfizam
                 return 848330207 + EqualityComparer<string>.Default.GetHashCode(email);
             }
 
+
             public override string ToString()
             {
                 return base.ToString() + " " + this.email + " " + this.subject + " " + this.salery;
             }
 
+            public void increaseSalary(int postotak)
+            {
+                this.salery = this.salery * (1+(postotak/100.0));
+            }
+            static public void increaseSalary(int postotak, params Teacher[] list)
+            {
+                for (int i = 0; i < list.Length; i++)
+                {
+                    list[i].increaseSalary(postotak);
+                }
+            }
+
+        }
+        class CompetitionEntry
+        {
+            Teacher teacher;
+            Dessert dessert;
+            Student[3] students;
+            int[] ratings;
+            int idx=0;
+            
+            public CompetitionEntry()
+            {
+
+            }
+
+            public CompetitionEntry()
+            {
+                this.teacher= teacher;
+                this.dessert= dessert;
+                this.students= students;
+                this.ratings= ratings;
+                this.idx= idx;
+            }
+
+                public Teacher teacher { get=> this.teacher; set=>this.teacher=value; }
+                public Dessert dessert { get=> this.dessert; set=>this.dessert=value;}
+                public Student students { get=> this.students; set=>this.students=value;}
+                public int ratings { get=> this.ratings; set=> this.ratings=value;}
+                public int idx { get=> this.idx; set=>this.idx=value;}
+
+                public boolean addRating (Student student, int rating) 
+                {
+		            if (idx == 3) return false; 
+		
+		            foreach (Student s in students)
+                    {
+                        if (s != null && s.Equals(students))
+                        return false; 
+                    }   
+		    
+		            students[idx] = student;
+		            ratings[idx] = rating;
+		            idx++;
+		            return true;
+	            }
+            
+                public double getRating() 
+                {
+		            if (idx == 0) return 0;
+		
+		            double sum = 0;
+		            for (int i=0; i<idx; i++)
+			        sum+= ratings[i];
+		
+		            return sum/idx; 
+	            }
+            }
+        public class UniMastersChef
+        {
+            private CompetitionEntrycs[] entries;
 
 
+            private int idx = 0;
+
+            public UniMasterChef(int noOfEntries)
+            {
+                this.entries = new CompetitionEntrycs[noOfEntries];
+            }
+            public bool addEntry(CompetitionEntrycs entry)
+            {
+                if (idx == this.entries.Length) return false;
+
+                foreach (CompetitionEntrycs e in entries)
+                {
+                    if (e != null && e.Equals(entry))
+                    return false; 
+                }
+                entries[idx++] = entry;
+                return true;
+            }   
+            public Dessert getBestDessert()
+            {
+                if (idx == 0) return null;
+
+                double max = entries[0].getRating();
+                int maxIdx = 0;
+
+                for (int i = 0; i < idx; i++)
+                {
+                    if (entries[i].getRating() > max)
+                    {
+                        max = entries[i].getRating();
+                        maxIdx = i;
+                    }
+                }
+
+                return entries[maxIdx].Dessert;
+            }
+            public static Person[] getInvolvedPeople(CompetitionEntrycs entry)
+            {
+
+                Person[] retVal = new Person[4]; 
+
+                int idx = 0;
+
+                retVal[idx++] = entry.Teacher;
+
+                foreach (Student s in entry.Students)
+                {
+                    retVal[idx++] = s;
+                }
+
+                return retVal;
+            }
         }
 
         static void Main(string[] args)
@@ -209,6 +339,18 @@ namespace Nasljeđivanje_i_polimorfizam
             Console.WriteLine(b.ToString());
 
             Console.WriteLine(b.getDessertType());
+
+            
+
+
+            Person p1 = new Person("Ivo","Ivic", 20);
+            Person p2 = new Person("Ivo","Ivic", 20);
+            Person p3 = new Student("Ivo","Ivic", 20, "0036312123", (short)3);
+            Person p4 = new Student("Marko","Marić", 25, "0036312123", (short)5);
+
+            Console.WriteLine(p1.Equals(p2));
+            Console.WriteLine(p1.Equals(p3));
+            Console.WriteLine(p3.Equals(p4));
 
             Console.ReadKey();
         }
